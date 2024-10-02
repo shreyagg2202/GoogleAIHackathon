@@ -190,9 +190,9 @@ if prompt := st.chat_input('Your message here...'):
         )
     )
     ## Send message to AI
-    prompt = make_prompt(prompt)
+    user_prompt = make_prompt(prompt)
     response = st.session_state.chat.send_message(
-        prompt,
+        user_prompt,
         stream=True,
     )
     # Display assistant response in chat message container
