@@ -49,7 +49,7 @@ class GeminiEmbeddingFunction(EmbeddingFunction):
 embedding_function = GeminiEmbeddingFunction()
 
 db = chroma_client.get_collection(name="Test3", embedding_function=embedding_function)
-st.write(db.list_collections())
+st.write(chroma_client.list_collections())
 st.write(db.get())
 
 def get_relevant_passage(query_embedding, db):
