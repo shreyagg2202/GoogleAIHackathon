@@ -1,6 +1,7 @@
 #Imports
 __import__('pysqlite3')
 import sys
+import os
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import chromadb
 import streamlit as st
@@ -19,6 +20,8 @@ st.set_page_config(
 
 chroma_client = chromadb.PersistentClient(path="Chroma_DB/")
 
+files_in_chroma_db = os.listdir('Chroma_DB')
+st.write("Files in Chroma_DB:", files_in_chroma_db)
 
 st.title("Policy Bazaar")
 st.caption("A policy advisor powered by Google Gemini")
@@ -45,7 +48,7 @@ class GeminiEmbeddingFunction(EmbeddingFunction):
   
 embedding_function = GeminiEmbeddingFunction()
 
-db = chroma_client.get_or_create_collection(name="Test3", embedding_function=embedding_function)
+db = chroma_client.get_collection(name="Test3", embedding_function=embedding_function)
 
 def get_relevant_passage(query_embedding, db):
   st.write("db:" ,db.get())
