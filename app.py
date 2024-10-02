@@ -138,6 +138,16 @@ with st.sidebar:
     chat_selection = st.selectbox('Select a chat session', options=list(past_chats.keys()), format_func=lambda x: past_chats[x])
     st.session_state.chat_id = chat_selection if chat_selection else chat_id
     st.session_state.chat_title = past_chats.get(st.session_state.chat_id, 'New Chat')
+
+     # Option to delete selected chat
+    if st.button('Delete Selected Chat'):
+        if st.session_state.chat_id in past_chats:
+            # Delete chat records
+            os.remove(f'data/{st.session_state.chat_id}-st_messages')
+            del past_chats[st.session_state.chat_id]
+            joblib.dump(past_chats, 'data/past_chats_list')
+            st.experimental_rerun()
+            
     # Save new chats after a message has been sent to AI
     # TODO: Give user a chance to name chat
     st.session_state.chat_title = f'ChatSession-{st.session_state.chat_id}'
