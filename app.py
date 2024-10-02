@@ -48,13 +48,16 @@ embedding_function = GeminiEmbeddingFunction()
 db = chroma_client.get_or_create_collection(name="Test3", embedding_function=embedding_function)
 
 def get_relevant_passage(query_embedding, db):
+  st.write("db:" ,db.get())
   passage = db.query(query_embeddings=[query_embedding], n_results=3)['documents'][0]
   return passage
 
 def make_prompt(query):
 
     query_embeddings = embedding_function(query)
+    st.write("query_embeddings:" ,query_embeddings)
     relevant_passage = get_relevant_passage(query_embeddings[0], db)
+    st.write("relevant_passage:" ,relevant_passage)
     relevant_passage = "\n\n---\n\n".join(relevant_passage)
     #   escaped = relevant_passage.replace("'", "").replace('"', "").replace("\n", " ")
     prompt = ("""INSTRUCTIONS:
