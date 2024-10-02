@@ -146,8 +146,8 @@ with st.sidebar:
             os.remove(f'data/{st.session_state.chat_id}-st_messages')
             del past_chats[st.session_state.chat_id]
             joblib.dump(past_chats, 'data/past_chats_list')
-            st.experimental_rerun()
-            
+            st.rerun()
+
     # Save new chats after a message has been sent to AI
     # TODO: Give user a chance to name chat
     st.session_state.chat_title = f'ChatSession-{st.session_state.chat_id}'
