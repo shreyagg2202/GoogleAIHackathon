@@ -50,7 +50,7 @@ embedding_function = GeminiEmbeddingFunction()
 
 db = chroma_client.get_collection(name="Test3", embedding_function=embedding_function)
 st.write(chroma_client.list_collections())
-st.write(db.get())
+st.write(db.get(include=['metadata','documents']))
 
 def get_relevant_passage(query_embedding, db):
   st.write("db:" ,db.get())
