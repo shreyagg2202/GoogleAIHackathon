@@ -86,7 +86,7 @@ def make_prompt(query):
 
 
 generation_config = {
-    "temperature": 0.2,
+    "temperature": 0.7,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -104,11 +104,11 @@ model = genai.GenerativeModel(
     generation_config=generation_config,
 )
 
-def translate_role_for_streamlit(user_role):
-    if user_role == "model":
-        return "assistant"
-    else:
-        return user_role
+# def translate_role_for_streamlit(user_role):
+#     if user_role == "model":
+#         return "assistant"
+#     else:
+#         return user_role
     
 # Create a data/ folder if it doesn't already exist
 try:
@@ -126,22 +126,15 @@ except:
 # Sidebar allows a list of past chats
 with st.sidebar:
     st.write('# Past Chats')
-    if st.session_state.get('chat_id') is None:
-        st.session_state.chat_id = st.selectbox(
-            label='Pick a past chat',
-            options=[new_chat_id] + list(past_chats.keys()),
-            format_func=lambda x: past_chats.get(x, 'New Chat'),
-            placeholder='_',
-        )
-    else:
-        # This will happen the first time AI response comes in
-        st.session_state.chat_id = st.selectbox(
-            label='Pick a past chat',
-            options=[new_chat_id, st.session_state.chat_id] + list(past_chats.keys()),
-            index=1,
-            format_func=lambda x: past_chats.get(x, 'New Chat' if x != st.session_state.chat_id else st.session_state.chat_title),
-            placeholder='_',
-        )
+    chat_id = st.text_input('Create or select a chat ID', value=time.strftime('%Y%m%d%H%M%S'))
+    chat_name = st.text_input('Name your chat', value=past_chats.get(chat_id, ''))
+    if st.button('Save Chat'):
+        past_chats[chat_id] = chat_name
+        joblib.dump(past_chats, 'data/past_chats_list')
+
+    chat_selection = st.selectbox('Select a chat session', options=list(past_chats.keys()), format_func=lambda x: past_chats[x])
+    st.session_state.chat_id = chat_selection if chat_selection else chat_id
+    st.session_state.chat_title = past_chats.get(st.session_state.chat_id, 'New Chat')
     # Save new chats after a message has been sent to AI
     # TODO: Give user a chance to name chat
     st.session_state.chat_title = f'ChatSession-{st.session_state.chat_id}'
