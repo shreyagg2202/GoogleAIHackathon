@@ -13,7 +13,7 @@ from chromadb import Documents, EmbeddingFunction, Embeddings
 #initialization
 API_KEY = "AIzaSyD69RPGzZPIDHTRzIWQH887huukyD5cHHc"
 
-new_chat_id = f'{time.time()}'
+new_chat_id = time.strftime('%Y%m%d%H%M%S')
 MODEL_ROLE = 'ai'
 AI_AVATAR_ICON = '✨'
 
@@ -69,18 +69,21 @@ def make_prompt(query):
     # st.write("relevant_passage:" ,relevant_passage)
     relevant_passage = "\n\n---\n\n".join(relevant_passage)
     #   escaped = relevant_passage.replace("'", "").replace('"', "").replace("\n", " ")
-    prompt = ("""INSTRUCTIONS:
-    Answer the users QUESTION using the DOCUMENT text above.
-    Keep your answer ground in the facts of the DOCUMENT.
-    If the DOCUMENT doesn't contain the facts to answer the QUESTION return "I dont have sufficient information for this query"
+    prompt = (f"""
+            INSTRUCTIONS:
+            You are an expert on insurance policies, and you are having a conversation where you help the user with their questions. 
+            Use your extensive knowledge to provide clear, concise, and accurate answers without referring to any documents directly. 
+            If the information needed to answer the question fully is not available, advise the user to contact customer support for 
+            more specific details.
 
-    DOCUMENT:
-    {relevant_passage}
+            QUESTION:
+            {query}
 
-    QUESTION:
-    {query}
+            CONTEXT:
+            As an expert, you know the following about similar topics:
+            {relevant_passage}
 
-    """).format(query=query, relevant_passage=relevant_passage)
+        """).format(query=query, relevant_passage=relevant_passage)
 
     return prompt
 
@@ -95,15 +98,18 @@ generation_config = {
 
 model = genai.GenerativeModel(
     model_name="gemini-1.5-flash",
-    system_instruction="""You are a human that provides Insurance Assistance, tasked with helping users understand their insurance policies, 
-    answer coverage questions and simplify complex insurance terminology. You will refer to the provided context and then base your 
-    answers on that without ever mentioning your backend documents in an upfront manner. Your responses should be clear, 
-    accurate, and user-friendly. If specific policy details are unknown, instruct the user to contact customer support for 
-    precise information. Maintain a professional tone, avoid legal advice, and request additional information if needed to 
-    accurately address the user's query. Your goal is to make the insurance process understandable and ensure users feel 
-    confident about their insurance decisions.
-    
-    Limitations: If the user engages in normal conversation, then you should reply appropriately""",
+    system_instruction="""
+        You are a human-like insurance expert tasked with helping users understand their insurance policies, 
+        answer coverage questions, and simplify complex insurance terminology. Your responses should rely on 
+        your vast knowledge of insurance matters, which you will convey clearly and accurately without explicitly 
+        referring to the documents you have access to. You should appear knowledgeable and only suggest contacting 
+        customer support or providing general guidance when the details are not within your immediate knowledge scope. 
+        Maintain a professional tone, avoid giving legal advice, and ask for more details if necessary to provide precise answers. 
+        Your goal is to make the insurance process understandable and ensure users feel confident and well-informed about their decisions.
+
+        Limitations: If the user engages in casual conversation or asks about general knowledge, respond in a manner that maintains 
+        the facade of a human expert. You should not mention or imply that your responses are generated or sourced from specific documents.
+        """,
     generation_config=generation_config,
 )
 
@@ -129,36 +135,35 @@ except:
 # Sidebar allows a list of past chats
 with st.sidebar:
     st.write('# Past Chats')
-    chat_id = st.text_input('Create or select a chat ID', value=time.strftime('%Y%m%d%H%M%S'))
-    chat_name = st.text_input('Name your chat', value=past_chats.get(chat_id, ''))
+    chat_name = st.text_input('Name your chat',  placeholder="Enter chat name")
     if st.button('Save Chat'):
-        past_chats[chat_id] = chat_name
+        past_chats[new_chat_id] = chat_name
         joblib.dump(past_chats, 'data/past_chats_list')
 
     chat_selection = st.selectbox('Select a chat session', options=list(past_chats.keys()), format_func=lambda x: past_chats[x])
-    st.session_state.chat_id = chat_selection if chat_selection else chat_id
+    st.session_state.new_chat_id = chat_selection if chat_selection else new_chat_id
     st.session_state.chat_title = past_chats.get(st.session_state.chat_id, 'New Chat')
 
      # Option to delete selected chat
     if st.button('Delete Selected Chat'):
-        if st.session_state.chat_id in past_chats:
+        if st.session_state.new_chat_id in past_chats:
             # Delete chat records
-            os.remove(f'data/{st.session_state.chat_id}-st_messages')
-            del past_chats[st.session_state.chat_id]
+            os.remove(f'data/{st.session_state.new_chat_id}-st_messages')
+            del past_chats[st.session_state.new_chat_id]
             joblib.dump(past_chats, 'data/past_chats_list')
             st.rerun()
 
     # Save new chats after a message has been sent to AI
     # TODO: Give user a chance to name chat
-    st.session_state.chat_title = f'ChatSession-{st.session_state.chat_id}'
+    st.session_state.chat_title = f'ChatSession-{st.session_state.new_chat_id}'
 
 # Chat history (allows to ask multiple questions)
 try:
     st.session_state.messages = joblib.load(
-        f'data/{st.session_state.chat_id}-st_messages'
+        f'data/{st.session_state.new_chat_id}-st_messages'
     )
     st.session_state.gemini_history = joblib.load(
-        f'data/{st.session_state.chat_id}-gemini_messages'
+        f'data/{st.session_state.new_chat_id}-gemini_messages'
     )
     print('old cache')
 except:
@@ -182,8 +187,8 @@ for message in st.session_state.messages:
 # React to user input
 if prompt := st.chat_input('Your message here...'):
     # Save this as a chat for later
-    if st.session_state.chat_id not in past_chats.keys():
-        past_chats[st.session_state.chat_id] = st.session_state.chat_title
+    if st.session_state.new_chat_id not in past_chats.keys():
+        past_chats[st.session_state.new_chat_id] = st.session_state.chat_title
         joblib.dump(past_chats, 'data/past_chats_list')
     # Display user message in chat message container
     with st.chat_message('user'):
@@ -233,32 +238,9 @@ if prompt := st.chat_input('Your message here...'):
     # Save to file
     joblib.dump(
         st.session_state.messages,
-        f'data/{st.session_state.chat_id}-st_messages',
+        f'data/{st.session_state.new_chat_id}-st_messages',
     )
     joblib.dump(
         st.session_state.gemini_history,
-        f'data/{st.session_state.chat_id}-gemini_messages',
+        f'data/{st.session_state.new_chat_id}-gemini_messages',
     )
-
-# # Initialize chat session in Streamlit if not already present
-# if "chat_session" not in st.session_state:
-#     st.session_state.chat_session = model.start_chat(history=[])
-
-# # Display the chat history
-# for message in st.session_state.chat_session.history:
-#     with st.chat_message(translate_role_for_streamlit(message.role)):
-#         st.markdown(message.parts[0].text)
-
-# # Input field for user's message
-# user_prompt = st.chat_input("Ask Gemini-Pro...")
-# if user_prompt:
-#     # Add user's message to chat and display it
-#     st.chat_message("user").markdown(user_prompt)
-
-#     # Send user's message to Gemini-Pro and get the response
-#     prompt = make_prompt(user_prompt)
-#     gemini_response = st.session_state.chat_session.send_message(prompt)
-
-#     # Display Gemini-Pro's response
-#     with st.chat_message("assistant"):
-#         st.markdown(gemini_response.text)
