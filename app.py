@@ -142,7 +142,7 @@ with st.sidebar:
 
     chat_selection = st.selectbox('Select a chat session', options=list(past_chats.keys()), format_func=lambda x: past_chats[x])
     st.session_state.new_chat_id = chat_selection if chat_selection else new_chat_id
-    st.session_state.chat_title = past_chats.get(st.session_state.chat_id, 'New Chat')
+    st.session_state.chat_title = past_chats.get(st.session_state.new_chat_id, 'New Chat')
 
      # Option to delete selected chat
     if st.button('Delete Selected Chat'):
