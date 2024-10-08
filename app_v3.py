@@ -338,6 +338,7 @@ if prompt := st.chat_input('Your message here...'):
             system_message_content = f"""
     You are an assistant that needs to collect the following information from the user: {remaining_items}.
     - Ask for one item at a time in a conversational manner.
+    - Dont greet the user or act like this is the first question. Straight up ask the question.
     """
             # Create the prompt template
             prompt_temp = ChatPromptTemplate(
