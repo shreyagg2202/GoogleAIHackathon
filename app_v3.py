@@ -36,22 +36,22 @@ if 'user_details' not in st.session_state:
 if 'ask_for' not in st.session_state:
     st.session_state.ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address']
 
-    class PersonalDetails(BaseModel):
-        name: Optional[str] = Field(default="",
-            description = "This is the name of the user.",
-        )
-        date_of_birth: Optional[str] = Field(default="",
-            description = "This is the date of birth of the user.",
-        )
-        address: Optional[str] = Field(default="",
-            description = "This is the address of the user.",
-        )
-        phone_number: Optional[str] = Field(default="",
-            description = "This is the phone_number of the user.",
-        )
-        email_address: Optional[str] = Field(default="",
-            description = "This is the email address of the user.",
-        )
+class PersonalDetails(BaseModel):
+    name: Optional[str] = Field(default="",
+        description = "This is the name of the user.",
+    )
+    date_of_birth: Optional[str] = Field(default="",
+        description = "This is the date of birth of the user.",
+    )
+    address: Optional[str] = Field(default="",
+        description = "This is the address of the user.",
+    )
+    phone_number: Optional[str] = Field(default="",
+        description = "This is the phone_number of the user.",
+    )
+    email_address: Optional[str] = Field(default="",
+        description = "This is the email address of the user.",
+    )
 
 # new_chat_id = time.strftime('%Y%m%d%H%M%S')
 MODEL_ROLE = 'ai'
@@ -167,93 +167,6 @@ def filter_response(text_input, user_details):
     user_details = add_non_empty_details(user_details,res)
     ask_for = check_what_is_empty(user_details)
     return user_details, ask_for
-
-# Main function to conduct the conversation
-# def collect_user_details(ask_for=None):
-#     if ask_for is None:
-#         ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address', 'adhaar_number']
-
-#     llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",api_key=API_key)
-
-#     # Initialize the conversation history
-#     messages = []
-    
-#     user_personal_details = PersonalDetails(full_name="",
-#                                             date_of_birth="",
-#                                             address="",
-#                                             phone_number="",
-#                                             email="",
-#                                             adhaar_number="")
-
-#     while ask_for:
-#         # Prepare the list of remaining items
-#         remaining_items = ', '.join(ask_for)
-
-#         # Define the system message with the remaining items
-#         system_message_content = f"""
-# You are an assistant that needs to collect the following information from the user: {remaining_items}.
-# - Ask for one item at a time in a conversational manner.
-# - Do not mention items that have already been provided.
-# - If there are no more items left, thank the user and inform them that the Customer Support team will contact them soon.
-# """
-#         # Create the prompt template
-#         prompt = ChatPromptTemplate(
-#             [
-#                 SystemMessage(content=system_message_content),
-#                 MessagesPlaceholder(variable_name="messages"),
-#             ]
-#         )
-        
-#         # Build the chain by combining the prompt and the LLM
-#         chain = prompt | llm
-
-#         time.sleep(5)
-#         ai_message = chain.invoke(
-#             {
-#                 "messages": [
-#                     HumanMessage(
-#                         content="Please go ahead and ask the required questions."
-#                         ),
-#                 ],
-#             }
-#         )
-        
-#         # print(messages)
-#         print(f"Assistant: {ai_message.content}")
-
-#         # Append the assistant's message to the conversation history
-#         messages.append(AIMessage(content=ai_message.content))
-            
-#         # Get user input
-#         user_input = input("User: ")
-
-#         # Check if the user wants to restart
-#         if user_input.strip().lower() == 'restart':
-#             # Re-initialize user_personal_details and ask_for
-#             user_personal_details = PersonalDetails(
-#                 full_name="",
-#                 date_of_birth="",
-#                 address="",
-#                 phone_number="",
-#                 email="",
-#                 adhaar_number=""
-#             )
-#             ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address', 'adhaar_number']
-#             print("Assistant: Let's start over. Please provide your details again.")
-#             # Optionally, clear the conversation history
-#             messages = []
-#             continue
-
-#         # Append the user's message to the conversation history
-#         messages.append(HumanMessage(content=user_input))
-        
-#         user_details, ask_for = filter_response(user_input, user_personal_details)
-#         user_personal_details = user_details
-        
-    
-    # print(user_details)
-    return user_details
-
 
 st.session_state.model = model
 st.session_state.chat = st.session_state.model.start_chat(
