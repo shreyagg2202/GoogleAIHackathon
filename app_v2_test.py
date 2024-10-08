@@ -250,9 +250,13 @@ if prompt := st.chat_input('Your message here...'):
         cancel = st.button("No, continue chatting")
 
         if confirm:
-            st.write("Thanks for selecting a policy and trusting us. I will now ask you a set of questions to gather your details for further processing of the selected policy.")
-            # Set a flag in session state to indicate policy selection
-            st.session_state.policy_selected = True
+             with st.chat_message(
+            name=MODEL_ROLE,
+            avatar=AI_AVATAR_ICON,
+            ):
+                message.placeholder_write("Thanks for selecting a policy and trusting us. I will now ask you a set of questions to gather your details for further processing of the selected policy.")
+                # Set a flag in session state to indicate policy selection
+                st.session_state.policy_selected = True
             # Proceed to the next step (e.g., collecting user details)
             # You can implement the next steps here
         elif cancel:
