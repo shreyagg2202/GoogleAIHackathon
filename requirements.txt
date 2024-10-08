@@ -3,3 +3,5 @@ google-generativeai
 pysqlite3-binary
 joblib
 sentence-transformers
+langchain
+langchain-google-genai
