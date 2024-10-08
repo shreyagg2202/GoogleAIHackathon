@@ -295,13 +295,13 @@ if prompt := st.chat_input('Your message here...'):
                 avatar=AI_AVATAR_ICON,
                 ):
                     st.markdown(continue_message)
-                    st.session_state.messages.append(
-                        dict(
-                            role=MODEL_ROLE,
-                            content=continue_message,
-                            avatar=AI_AVATAR_ICON,
-                        )
-                    )
+            st.session_state.messages.append(
+                dict(
+                    role=MODEL_ROLE,
+                    content=continue_message,
+                    avatar=AI_AVATAR_ICON,
+                )
+            )
         else:
             # Assistant prompts for a valid response
             invalid_response = "Please respond with 'yes' or 'no'."
@@ -370,13 +370,13 @@ if prompt := st.chat_input('Your message here...'):
                     avatar=AI_AVATAR_ICON,
                     ):
                         st.markdown(next_question)
-                        st.session_state.messages.append(
-                            dict(
-                                role=MODEL_ROLE,
-                                content=next_question,
-                                avatar=AI_AVATAR_ICON,
-                            )
-                        )
+                st.session_state.messages.append(
+                    dict(
+                        role=MODEL_ROLE,
+                        content=next_question,
+                        avatar=AI_AVATAR_ICON,
+                    )
+                )
             else:
                 # All details collected
                 st.session_state.conversation_phase = 'finished'
@@ -389,13 +389,13 @@ if prompt := st.chat_input('Your message here...'):
                     avatar=AI_AVATAR_ICON,
                     ):
                         st.markdown(thank_you_message)
-                        st.session_state.messages.append(
-                            dict(
-                                role=MODEL_ROLE,
-                                content=thank_you_message,
-                                avatar=AI_AVATAR_ICON,
-                            )
-                        )
+                st.session_state.messages.append(
+                    dict(
+                        role=MODEL_ROLE,
+                        content=thank_you_message,
+                        avatar=AI_AVATAR_ICON,
+                    )
+                )
 
         # Check if the user wants to restart
         # Not completed yet
@@ -416,13 +416,13 @@ if prompt := st.chat_input('Your message here...'):
                 avatar=AI_AVATAR_ICON,
                 ):
                     st.markdown(start_over_message)
-                    st.session_state.messages.append(
-                        dict(
-                            role=MODEL_ROLE,
-                            content=start_over_message,
-                            avatar=AI_AVATAR_ICON,
-                        )
-                    )
+            st.session_state.messages.append(
+                dict(
+                    role=MODEL_ROLE,
+                    content=start_over_message,
+                    avatar=AI_AVATAR_ICON,
+                )
+            )
                 # Optionally, clear the conversation history
             messages = []
 
@@ -434,13 +434,13 @@ if prompt := st.chat_input('Your message here...'):
                     avatar=AI_AVATAR_ICON,
                     ):
                         st.markdown(end_message)
-                        st.session_state.messages.append(
-                            dict(
-                                role=MODEL_ROLE,
-                                content=end_message,
-                                avatar=AI_AVATAR_ICON,
-                            )
-                        )
+        st.session_state.messages.append(
+            dict(
+                role=MODEL_ROLE,
+                content=end_message,
+                avatar=AI_AVATAR_ICON,
+            )
+        )
         st.session_state.conversation_phase = 'policy_selection'  # Reset to initial phase
         st.session_state.policy_selected = False
         st.session_state.user_details = None
