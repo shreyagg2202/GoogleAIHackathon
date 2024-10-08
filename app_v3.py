@@ -173,13 +173,13 @@ st.session_state.chat = st.session_state.model.start_chat(
     history=st.session_state.gemini_history,
 )
 
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(
-        name=message['role'],
-        avatar=message.get('avatar'),
-    ):
-        st.markdown(message['content'])
+# # Display chat messages from history on app rerun
+# for message in st.session_state.messages:
+#     with st.chat_message(
+#         name=message['role'],
+#         avatar=message.get('avatar'),
+#     ):
+#         st.markdown(message['content'])
 
 
 # React to user input
