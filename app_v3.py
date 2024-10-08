@@ -200,9 +200,11 @@ if prompt := st.chat_input('Your message here...'):
             st.session_state.conversation_phase = 'awaiting_confirmation'
             # Assistant asks for confirmation
             confirmation_message = "Are you sure you want to select this policy?"
-            with st.chat_message(name=MODEL_ROLE,
-                                avatar=AI_AVATAR_ICON,):
-                st.markdown(confirmation_message)
+            with st.chat_message(
+                 name=MODEL_ROLE,
+                avatar=AI_AVATAR_ICON,
+                ):
+                    st.markdown(confirmation_message)
             st.session_state.messages.append(
                 dict(
                     role=MODEL_ROLE,
@@ -262,13 +264,13 @@ if prompt := st.chat_input('Your message here...'):
                 avatar=AI_AVATAR_ICON,
                 ):
                     st.markdown(confirmation_ack)
-                    st.session_state.messages.append(
-                        dict(
-                            role=MODEL_ROLE,
-                            content=confirmation_ack,
-                            avatar=AI_AVATAR_ICON,
-                        )
-                    )
+            st.session_state.messages.append(
+                dict(
+                    role=MODEL_ROLE,
+                    content=confirmation_ack,
+                    avatar=AI_AVATAR_ICON,
+                )
+            )
             st.session_state.user_details = PersonalDetails()
             question = "Please provide your name"
             with st.chat_message(
@@ -308,17 +310,18 @@ if prompt := st.chat_input('Your message here...'):
                 avatar=AI_AVATAR_ICON,
                 ):
                     st.markdown(invalid_response)
-                    st.session_state.messages.append(
-                        dict(
-                            role=MODEL_ROLE,
-                            content=invalid_response,
-                            avatar=AI_AVATAR_ICON,
-                        )
-                    )
+            st.session_state.messages.append(
+                dict(
+                    role=MODEL_ROLE,
+                    content=invalid_response,
+                    avatar=AI_AVATAR_ICON,
+                )
+            )
 
     elif st.session_state.conversation_phase == 'collecting_details':
         # Collecting user details
         # Use your LLM to parse the user's response and update details
+        ask_for = st.session_state.ask_for
         while ask_for:
             llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",api_key=API_KEY)
 
