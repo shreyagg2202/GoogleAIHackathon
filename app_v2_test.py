@@ -5,7 +5,6 @@ import time
 from semantic_search import is_similar
 
 from typing import Optional
-
 from pydantic import BaseModel, Field
 from langchain.prompts.chat import ChatPromptTemplate, MessagesPlaceholder
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
@@ -217,9 +216,9 @@ if 'gemini_history' not in st.session_state:
     st.session_state.gemini_history = []
 
 # st.session_state.model = model
-st.session_state.chat = st.session_state.model.start_chat(
-    history=st.session_state.gemini_history,
-)
+# st.session_state.chat = st.session_state.model.start_chat(
+#     history=st.session_state.gemini_history,
+# )
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
