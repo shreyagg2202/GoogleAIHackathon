@@ -375,25 +375,6 @@ if prompt := st.chat_input('Your message here...'):
                         avatar=AI_AVATAR_ICON,
                     )
                 )
-            else:
-                # All details collected
-                st.session_state.conversation_phase = 'finished'
-                thank_you_message = (
-                "Thank you! Your details have been submitted. "
-                "Our customer support team will contact you soon."
-            )
-                with st.chat_message(
-                    name=MODEL_ROLE,
-                    avatar=AI_AVATAR_ICON,
-                    ):
-                        st.markdown(thank_you_message)
-                st.session_state.messages.append(
-                    dict(
-                        role=MODEL_ROLE,
-                        content=thank_you_message,
-                        avatar=AI_AVATAR_ICON,
-                    )
-                )
         else:
             # All details collected
             st.session_state.conversation_phase = 'finished'
