@@ -128,18 +128,18 @@ You are an assistant that needs to collect the following information from the us
             avatar=AI_AVATAR_ICON,
         ):
             message_placeholder = st.empty()
-            full_response = ''
-            # Streams in a chunk at a time
-            for chunk in response:
-                # Simulate stream of chunk
-                # TODO: Chunk missing `text` if API stops mid-stream ("safety"?)
-                for ch in chunk.text.split(' '):
-                    full_response += ch + ' '
-                    time.sleep(0.05)
-                    # Rewrites with a cursor at end
-                    message_placeholder.write(full_response + '▌')
-            # Write full message with placeholder
-            message_placeholder.write(full_response)
+            # full_response = ''
+            # # Streams in a chunk at a time
+            # for chunk in response:
+            #     # Simulate stream of chunk
+            #     # TODO: Chunk missing `text` if API stops mid-stream ("safety"?)
+            #     for ch in chunk.text.split(' '):
+            #         full_response += ch + ' '
+            #         time.sleep(0.05)
+            #         # Rewrites with a cursor at end
+            #         message_placeholder.write(full_response + '▌')
+            # # Write full message with placeholder
+            message_placeholder.write(response)
 
         # Add assistant response to chat history
         st.session_state.messages.append(
@@ -275,9 +275,3 @@ if prompt := st.chat_input('Your message here...'):
         if st.button("Submit Details"):
             st.write("Thank you! Your details have been submitted.")
             # Reset the conversation or take further action
-
-# API_key = "AIzaSyD69RPGzZPIDHTRzIWQH887huukyD5cHHc"
-
-
-    
-collect_user_details()
