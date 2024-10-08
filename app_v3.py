@@ -173,13 +173,13 @@ st.session_state.chat = st.session_state.model.start_chat(
     history=st.session_state.gemini_history,
 )
 
-# # Display chat messages from history on app rerun
-# for message in st.session_state.messages:
-#     with st.chat_message(
-#         name=message['role'],
-#         avatar=message.get('avatar'),
-#     ):
-#         st.markdown(message['content'])
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(
+        name=message['role'],
+        avatar=message.get('avatar'),
+    ):
+        st.markdown(message['content'])
 
 
 # React to user input
@@ -343,7 +343,7 @@ if prompt := st.chat_input('Your message here...'):
     - If there are no more items left, thank the user and inform them that the Customer Support team will contact them soon.
     """
             # Create the prompt template
-            prompt = ChatPromptTemplate(
+            prompt_temp = ChatPromptTemplate(
                 [
                     SystemMessage(content=system_message_content),
                     MessagesPlaceholder(variable_name="messages"),
@@ -351,7 +351,7 @@ if prompt := st.chat_input('Your message here...'):
             )
             
             # Build the chain by combining the prompt and the LLM
-            chain = prompt | llm
+            chain = prompt_temp | llm
 
             time.sleep(5)
             ai_message = chain.invoke(
