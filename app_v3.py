@@ -208,6 +208,7 @@ if prompt := st.chat_input('Your message here...'):
             st.session_state.messages.append(
                 dict(
                     role=MODEL_ROLE,
+                    content=confirmation_message,
                     avatar=AI_AVATAR_ICON,
                 )
             )
@@ -321,110 +322,109 @@ if prompt := st.chat_input('Your message here...'):
     elif st.session_state.conversation_phase == 'collecting_details':
         # Collecting user details
         # Use your LLM to parse the user's response and update details
+
         ask_for = st.session_state.ask_for
-        while ask_for:
+        if st.session_state.ask_for:
             llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",api_key=API_KEY)
 
-            user_details, ask_for = filter_response(prompt, st.session_state.user_details)       
-            # user_details = collect_user_details()
-
+            user_details, ask_for = filter_response(prompt, st.session_state.user_details)
             st.session_state.user_details = user_details
             st.session_state.ask_for = ask_for
 
-            if st.session_state.ask_for:
-                # Prepare the list of remaining items
-                remaining_items = ', '.join(ask_for)
+            
+            # Prepare the list of remaining items
+            remaining_items = ', '.join(ask_for)
 
-                # Define the system message with the remaining items
-                system_message_content = f"""
-        You are an assistant that needs to collect the following information from the user: {remaining_items}.
-        - Ask for one item at a time in a conversational manner.
-        - Do not mention items that have already been provided.
-        - If there are no more items left, thank the user and inform them that the Customer Support team will contact them soon.
-        """
-                # Create the prompt template
-                prompt = ChatPromptTemplate(
-                    [
-                        SystemMessage(content=system_message_content),
-                        MessagesPlaceholder(variable_name="messages"),
-                    ]
-                )
-                
-                # Build the chain by combining the prompt and the LLM
-                chain = prompt | llm
-
-                time.sleep(5)
-                ai_message = chain.invoke(
-                    {
-                        "messages": [
-                            HumanMessage(
-                                content="Please go ahead and ask the required questions."
-                                ),
-                        ],
-                    }
-                )
-                
-                next_question = ai_message.content  # Store the next question for the user to response
-                with st.chat_message(
-                    name=MODEL_ROLE,
-                    avatar=AI_AVATAR_ICON,
-                    ):
-                        st.markdown(next_question)
-                st.session_state.messages.append(
-                    dict(
-                        role=MODEL_ROLE,
-                        content=next_question,
-                        avatar=AI_AVATAR_ICON,
-                    )
-                )
-            else:
-                # All details collected
-                st.session_state.conversation_phase = 'finished'
-                thank_you_message = (
-                "Thank you! Your details have been submitted. "
-                "Our customer support team will contact you soon."
+            # Define the system message with the remaining items
+            system_message_content = f"""
+    You are an assistant that needs to collect the following information from the user: {remaining_items}.
+    - Ask for one item at a time in a conversational manner.
+    - Do not mention items that have already been provided.
+    - If there are no more items left, thank the user and inform them that the Customer Support team will contact them soon.
+    """
+            # Create the prompt template
+            prompt = ChatPromptTemplate(
+                [
+                    SystemMessage(content=system_message_content),
+                    MessagesPlaceholder(variable_name="messages"),
+                ]
             )
-                with st.chat_message(
-                    name=MODEL_ROLE,
-                    avatar=AI_AVATAR_ICON,
-                    ):
-                        st.markdown(thank_you_message)
-                st.session_state.messages.append(
-                    dict(
-                        role=MODEL_ROLE,
-                        content=thank_you_message,
-                        avatar=AI_AVATAR_ICON,
-                    )
-                )
+            
+            # Build the chain by combining the prompt and the LLM
+            chain = prompt | llm
 
-        # Check if the user wants to restart
-        # Not completed yet
-        if prompt.strip().lower() == 'restart':
-            # Re-initialize user_personal_details and ask_for
-            user_personal_details = PersonalDetails(
-                full_name="",
-                date_of_birth="",
-                address="",
-                phone_number="",
-                email="",
-                adhaar_number=""
+            time.sleep(5)
+            ai_message = chain.invoke(
+                {
+                    "messages": [
+                        HumanMessage(
+                            content="Please go ahead and ask the required questions."
+                            ),
+                    ],
+                }
             )
-            ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address', 'adhaar_number']
-            start_over_message = "Assistant: Let's start over. Please provide your details again."
+            
+            next_question = ai_message.content  # Store the next question for the user to response
             with st.chat_message(
                 name=MODEL_ROLE,
                 avatar=AI_AVATAR_ICON,
                 ):
-                    st.markdown(start_over_message)
+                    st.markdown(next_question)
             st.session_state.messages.append(
                 dict(
                     role=MODEL_ROLE,
-                    content=start_over_message,
+                    content=next_question,
                     avatar=AI_AVATAR_ICON,
                 )
             )
-                # Optionally, clear the conversation history
-            messages = []
+        else:
+            # All details collected
+            st.session_state.conversation_phase = 'finished'
+            thank_you_message = (
+            "Thank you! Your details have been submitted. "
+            "Our customer support team will contact you soon."
+        )
+            with st.chat_message(
+                name=MODEL_ROLE,
+                avatar=AI_AVATAR_ICON,
+                ):
+                    st.markdown(thank_you_message)
+            st.session_state.messages.append(
+                dict(
+                    role=MODEL_ROLE,
+                    content=thank_you_message,
+                    avatar=AI_AVATAR_ICON,
+                )
+            )
+
+    # Check if the user wants to restart
+    # Not completed yet
+    if prompt.strip().lower() == 'restart':
+        # Re-initialize user_personal_details and ask_for
+        user_personal_details = PersonalDetails(
+            full_name="",
+            date_of_birth="",
+            address="",
+            phone_number="",
+            email="",
+            adhaar_number=""
+        )
+        ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address', 'adhaar_number']
+        start_over_message = "Assistant: Let's start over. Please provide your details again."
+        with st.chat_message(
+            name=MODEL_ROLE,
+            avatar=AI_AVATAR_ICON,
+            ):
+                st.markdown(start_over_message)
+        st.session_state.messages.append(
+            dict(
+                role=MODEL_ROLE,
+                content=start_over_message,
+                avatar=AI_AVATAR_ICON,
+            )
+        )
+            # Optionally, clear the conversation history
+        messages = []
 
     elif st.session_state.conversation_phase == 'finished':
         # Conversation is finished, you can reset or handle further interactions
