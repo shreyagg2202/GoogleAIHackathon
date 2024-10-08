@@ -2,3 +2,4 @@ chromadb
 google-generativeai
 pysqlite3-binary
 joblib
+sentence_transformers
