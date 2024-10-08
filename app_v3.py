@@ -323,7 +323,6 @@ if prompt := st.chat_input('Your message here...'):
         # Collecting user details
         # Use your LLM to parse the user's response and update details
 
-        ask_for = st.session_state.ask_for
         if st.session_state.ask_for:
             llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash",api_key=API_KEY)
 
@@ -339,8 +338,6 @@ if prompt := st.chat_input('Your message here...'):
             system_message_content = f"""
     You are an assistant that needs to collect the following information from the user: {remaining_items}.
     - Ask for one item at a time in a conversational manner.
-    - Do not mention items that have already been provided.
-    - If there are no more items left, thank the user and inform them that the Customer Support team will contact them soon.
     """
             # Create the prompt template
             prompt_temp = ChatPromptTemplate(
@@ -410,7 +407,7 @@ if prompt := st.chat_input('Your message here...'):
             adhaar_number=""
         )
         ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address', 'adhaar_number']
-        start_over_message = "Assistant: Let's start over. Please provide your details again."
+        start_over_message = "Let's start over. Please provide your details again."
         with st.chat_message(
             name=MODEL_ROLE,
             avatar=AI_AVATAR_ICON,
