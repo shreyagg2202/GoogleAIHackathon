@@ -278,13 +278,13 @@ if prompt := st.chat_input('Your message here...'):
                 avatar=AI_AVATAR_ICON,
                 ):
                     st.markdown(question)
-                    st.session_state.messages.append(
-                        dict(
-                            role=MODEL_ROLE,
-                            content=question ,
-                            avatar=AI_AVATAR_ICON,
-                        )
-                    )
+            st.session_state.messages.append(
+                dict(
+                    role=MODEL_ROLE,
+                    content=question ,
+                    avatar=AI_AVATAR_ICON,
+                )
+            )
         elif user_response in ['no', 'n']:
             st.session_state.policy_selected = False
             st.session_state.conversation_phase = 'policy_selection'
