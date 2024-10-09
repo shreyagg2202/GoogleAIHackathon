@@ -198,8 +198,8 @@ def filter_response(text_input, user_details):
 # Define the function to save details to GitHub
 def save_details_to_github(user_details):
     # Get GitHub credentials from st.secrets
-    GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
-    GITHUB_REPO = st.secrets['GITHUB_REPO']  # In the format 'username/repo_name'
+    GITHUB_TOKEN = st.secrets['secrets']['GITHUB_TOKEN']
+    GITHUB_REPO = st.secrets['secrets']['GITHUB_REPO']  # In the format 'username/repo_name'
     # GITHUB_USERNAME = st.secrets['GITHUB_USERNAME']
     
     content = json.dumps(user_details, indent=4)
