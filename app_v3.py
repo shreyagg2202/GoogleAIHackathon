@@ -222,14 +222,7 @@ def save_details_to_github(user_details):
     }
     
     response = requests.put(url, headers=headers, data=json.dumps(payload))
-    
-    if response.status_code == 201:
-        st.success("Details saved to GitHub successfully.")
-    else:
-        st.error(f"Failed to save details to GitHub. Status code: {response.status_code}")
-        st.error(response.json())
-
-
+        
 st.session_state.model = model
 st.session_state.chat = st.session_state.model.start_chat(
     history=st.session_state.gemini_history,
