@@ -18,6 +18,11 @@ from langchain.prompts.chat import ChatPromptTemplate, MessagesPlaceholder
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 from langchain_google_genai import ChatGoogleGenerativeAI   # Import the LLM
 
+import json
+import requests
+import datetime
+import base64
+
 #initialization
 API_KEY = "AIzaSyD69RPGzZPIDHTRzIWQH887huukyD5cHHc"
 
@@ -65,8 +70,27 @@ st.set_page_config(
 chroma_client = chromadb.PersistentClient(path="Chroma_DB/")
 
 
-st.title("Policy Bazaar")
+st.title("PolicyPal")
 st.caption("A policy advisor powered by Google Gemini")
+
+# Instructions for the user
+st.markdown("""
+### Welcome to Policy Bazaar!
+
+This assistant is here to help you understand and select the best insurance policy for your needs. You can ask any questions about insurance policies, and the assistant will provide you with expert advice.
+
+**How to use this assistant:**
+- Start by asking any questions you have about insurance policies.
+- If you decide to select a policy, the assistant will guide you through the process.
+- You will be asked to confirm your selection.
+- After confirmation, you will be prompted to provide some personal details.
+- You can review and edit your details before submitting.
+
+Feel free to ask any questions!
+
+---
+""")
+
 
 try:
     genai.configure(api_key=API_KEY)
@@ -426,20 +450,69 @@ if prompt := st.chat_input('Your message here...'):
 
     elif st.session_state.conversation_phase == 'finished':
         # Conversation is finished, you can reset or handle further interactions
-        end_message = "If you have any more questions, feel free to ask!"
-        with st.chat_message(
-                    name=MODEL_ROLE,
-                    avatar=AI_AVATAR_ICON,
-                    ):
-                        st.markdown(end_message)
-        st.session_state.messages.append(
-            dict(
-                role=MODEL_ROLE,
-                content=end_message,
-                avatar=AI_AVATAR_ICON,
-            )
-        )
-        st.session_state.conversation_phase = 'policy_selection'  # Reset to initial phase
+        st.write("Please review your details below. You can make changes if necessary before submitting.")
+
+        # Create a form for editing the details
+    with st.form(key='details_form'):
+        updated_details = {}
+        for field_name, field_value in st.session_state.user_details.dict().items():
+            input_label = field_name.replace('_',' ').title()
+            updated_value = st.text_input(input_label, value=field_value)
+            updated_details[field_name] = updated_value
+        
+        # Submit button
+        submitted = st.form_submit_button("Submit")
+    
+    if submitted:
+        for field_name, updated_value in updated_details.items():
+            setattr(st.session_state.user_details, field_name, updated_value)
+
+        # Save details to GitHub
+        save_details_to_github(st.session_state.user_details)
+        
+        # Thank the user
+        st.success("Thank you! Your details have been submitted.")
+        
+        # Reset the conversation
+        st.session_state.conversation_phase = 'policy_selection'
         st.session_state.policy_selected = False
         st.session_state.user_details = None
         st.session_state.ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address']
+        st.session_state.messages = []
+        
+        # Refresh the app completely
+        st.experimental_rerun()
+
+# Define the function to save details to GitHub
+def save_details_to_github(user_details):
+    # Get GitHub credentials from st.secrets
+    GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
+    GITHUB_REPO = st.secrets['GITHUB_REPO']  # In the format 'username/repo_name'
+    # GITHUB_USERNAME = st.secrets['GITHUB_USERNAME']
+    
+    content = json.dumps(user_details, indent=4)
+    
+    # Create a unique filename using timestamp
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"user_details_{timestamp}.json"
+    
+    # Prepare the API request
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filename}"
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    message = f"Add user details {filename}"
+    content_base64 = base64.b64encode(content.encode()).decode()
+    payload = {
+        "message": message,
+        "content": content_base64
+    }
+    
+    response = requests.put(url, headers=headers, data=json.dumps(payload))
+    
+    if response.status_code == 201:
+        st.success("Details saved to GitHub successfully.")
+    else:
+        st.error(f"Failed to save details to GitHub. Status code: {response.status_code}")
+        st.error(response.json())
