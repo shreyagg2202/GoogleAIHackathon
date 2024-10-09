@@ -24,7 +24,7 @@ import datetime
 import base64
 
 #initialization
-API_KEY = st.secrets['GEMINI_API_KEY']
+API_KEY = st.secrets["GEMINI_API_KEY"]
 updated_details = {}
 
 # Initialize session state variables if not already set
