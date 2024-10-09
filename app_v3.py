@@ -202,7 +202,7 @@ def save_details_to_github(user_details):
     GITHUB_REPO = st.secrets["github_repo"]  # In the format 'username/repo_name'
     # GITHUB_USERNAME = st.secrets['GITHUB_USERNAME']
     
-    content = json.dumps(user_details, indent=4)
+    content = json.dumps(user_details.dict(), indent=4)
     
     # Create a unique filename using timestamp
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
