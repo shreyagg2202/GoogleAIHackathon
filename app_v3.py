@@ -538,6 +538,6 @@ if st.session_state.conversation_phase == 'finished':
         st.session_state.messages = []
         
         # Refresh the app completely
-        st.experimental_rerun()
+        st.rerun()
             
     
