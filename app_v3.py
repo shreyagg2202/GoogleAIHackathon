@@ -32,8 +32,6 @@ if 'messages' not in st.session_state:
     st.session_state.messages = []
 if 'gemini_history' not in st.session_state:
     st.session_state.gemini_history = []
-if 'submitted' not in st.session_state:
-    st.session_state.submitted = False
 if 'conversation_phase' not in st.session_state:
     st.session_state.conversation_phase = 'policy_selection'  # Initial phase
 if 'policy_selected' not in st.session_state:
@@ -519,13 +517,13 @@ if prompt := st.chat_input('Your message here...'):
                 updated_details[field_name] = updated_value
             
             def update_session_with_submitted():
-                 st.session_state.submitted = True
+                st.session_state.conversation_phase = "submitted"
 
             # Submit button
             if st.form_submit_button("Submit", on_click=update_session_with_submitted):
-                st.session_state.submitted = True
+                st.session_state.conversation_phase = "submitted"
     
-    elif st.session_state.submitted == True:
+    elif st.session_state.conversation_phase == "submitted":
         for field_name, updated_value in updated_details.items():
             setattr(st.session_state.user_details, field_name, updated_value)
 
