@@ -521,8 +521,6 @@ if prompt := st.chat_input('Your message here...'):
                     input_label = field_name.replace('_',' ').title()
                     updated_value = st.text_input(input_label, value=field_value)
                     updated_details[field_name] = updated_value
-                
-                    st.session_state.conversation_phase = "submitted"
 
                 # Submit button
                 submitted = st.form_submit_button("Submit")
