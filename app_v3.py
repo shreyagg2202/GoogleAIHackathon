@@ -192,6 +192,42 @@ def filter_response(text_input, user_details):
     ask_for = check_what_is_empty(user_details)
     return user_details, ask_for
 
+
+# Define the function to save details to GitHub
+def save_details_to_github(user_details):
+    # Get GitHub credentials from st.secrets
+    GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
+    GITHUB_REPO = st.secrets['GITHUB_REPO']  # In the format 'username/repo_name'
+    # GITHUB_USERNAME = st.secrets['GITHUB_USERNAME']
+    
+    content = json.dumps(user_details, indent=4)
+    
+    # Create a unique filename using timestamp
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"user_details_{timestamp}.json"
+    
+    # Prepare the API request
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filename}"
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    message = f"Add user details {filename}"
+    content_base64 = base64.b64encode(content.encode()).decode()
+    payload = {
+        "message": message,
+        "content": content_base64
+    }
+    
+    response = requests.put(url, headers=headers, data=json.dumps(payload))
+    
+    if response.status_code == 201:
+        st.success("Details saved to GitHub successfully.")
+    else:
+        st.error(f"Failed to save details to GitHub. Status code: {response.status_code}")
+        st.error(response.json())
+
+
 st.session_state.model = model
 st.session_state.chat = st.session_state.model.start_chat(
     history=st.session_state.gemini_history,
@@ -399,6 +435,26 @@ if prompt := st.chat_input('Your message here...'):
                         avatar=AI_AVATAR_ICON,
                     )
                 )
+
+            else:
+                # All details collected
+                st.session_state.conversation_phase = 'finished'
+                thank_you_message = (
+                "Thank you! Your details have been submitted. "
+                "Our customer support team will contact you soon."
+            )
+                with st.chat_message(
+                    name=MODEL_ROLE,
+                    avatar=AI_AVATAR_ICON,
+                    ):
+                        st.markdown(thank_you_message)
+                st.session_state.messages.append(
+                    dict(
+                        role=MODEL_ROLE,
+                        content=thank_you_message,
+                        avatar=AI_AVATAR_ICON,
+                    )
+                )
         else:
             # All details collected
             st.session_state.conversation_phase = 'finished'
@@ -472,7 +528,6 @@ if prompt := st.chat_input('Your message here...'):
         
         # Thank the user
         st.success("Thank you! Your details have been submitted.")
-        
         # Reset the conversation
         st.session_state.conversation_phase = 'policy_selection'
         st.session_state.policy_selected = False
@@ -482,37 +537,3 @@ if prompt := st.chat_input('Your message here...'):
         
         # Refresh the app completely
         st.experimental_rerun()
-
-# Define the function to save details to GitHub
-def save_details_to_github(user_details):
-    # Get GitHub credentials from st.secrets
-    GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
-    GITHUB_REPO = st.secrets['GITHUB_REPO']  # In the format 'username/repo_name'
-    # GITHUB_USERNAME = st.secrets['GITHUB_USERNAME']
-    
-    content = json.dumps(user_details, indent=4)
-    
-    # Create a unique filename using timestamp
-    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = f"user_details_{timestamp}.json"
-    
-    # Prepare the API request
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filename}"
-    headers = {
-        'Authorization': f'token {GITHUB_TOKEN}',
-        'Accept': 'application/vnd.github.v3+json'
-    }
-    message = f"Add user details {filename}"
-    content_base64 = base64.b64encode(content.encode()).decode()
-    payload = {
-        "message": message,
-        "content": content_base64
-    }
-    
-    response = requests.put(url, headers=headers, data=json.dumps(payload))
-    
-    if response.status_code == 201:
-        st.success("Details saved to GitHub successfully.")
-    else:
-        st.error(f"Failed to save details to GitHub. Status code: {response.status_code}")
-        st.error(response.json())
