@@ -441,41 +441,41 @@ if prompt := st.chat_input('Your message here...'):
             else:
                 # All details collected
                 st.session_state.conversation_phase = 'finished'
-                thank_you_message = (
-                "Thank you! Your details have been submitted. "
-                "Our customer support team will contact you soon."
-            )
-                with st.chat_message(
-                    name=MODEL_ROLE,
-                    avatar=AI_AVATAR_ICON,
-                    ):
-                        st.markdown(thank_you_message)
-                st.session_state.messages.append(
-                    dict(
-                        role=MODEL_ROLE,
-                        content=thank_you_message,
-                        avatar=AI_AVATAR_ICON,
-                    )
-                )
+            #     thank_you_message = (
+            #     "Thank you! Your details have been submitted. "
+            #     "Our customer support team will contact you soon."
+            # )
+            #     with st.chat_message(
+            #         name=MODEL_ROLE,
+            #         avatar=AI_AVATAR_ICON,
+            #         ):
+            #             st.markdown(thank_you_message)
+            #     st.session_state.messages.append(
+            #         dict(
+            #             role=MODEL_ROLE,
+            #             content=thank_you_message,
+            #             avatar=AI_AVATAR_ICON,
+            #         )
+            #     )
         else:
             # All details collected
             st.session_state.conversation_phase = 'finished'
-            thank_you_message = (
-            "Thank you! Your details have been submitted. "
-            "Our customer support team will contact you soon."
-        )
-            with st.chat_message(
-                name=MODEL_ROLE,
-                avatar=AI_AVATAR_ICON,
-                ):
-                    st.markdown(thank_you_message)
-            st.session_state.messages.append(
-                dict(
-                    role=MODEL_ROLE,
-                    content=thank_you_message,
-                    avatar=AI_AVATAR_ICON,
-                )
-            )
+        #     thank_you_message = (
+        #     "Thank you! Your details have been submitted. "
+        #     "Our customer support team will contact you soon."
+        # )
+        #     with st.chat_message(
+        #         name=MODEL_ROLE,
+        #         avatar=AI_AVATAR_ICON,
+        #         ):
+        #             st.markdown(thank_you_message)
+        #     st.session_state.messages.append(
+        #         dict(
+        #             role=MODEL_ROLE,
+        #             content=thank_you_message,
+        #             avatar=AI_AVATAR_ICON,
+        #         )
+        #     )
 
     # Check if the user wants to restart
     # Not completed yet
@@ -509,7 +509,6 @@ if prompt := st.chat_input('Your message here...'):
 if st.session_state.conversation_phase == 'finished':
     # Conversation is finished, you can reset or handle further interactions
     st.write("Please review your details below. You can make changes if necessary before submitting.")
-    st.write(st.session_state.clicked)
 
     # Create a form for editing the details
     with st.form(key='details_form'):
