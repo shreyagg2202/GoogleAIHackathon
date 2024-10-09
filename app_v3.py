@@ -24,7 +24,7 @@ import datetime
 import base64
 
 #initialization
-API_KEY = st.secrets["GEMINI_API_KEY"]
+API_KEY = st.secrets["gemini_api_key "]
 updated_details = {}
 
 # Initialize session state variables if not already set
@@ -198,8 +198,8 @@ def filter_response(text_input, user_details):
 # Define the function to save details to GitHub
 def save_details_to_github(user_details):
     # Get GitHub credentials from st.secrets
-    GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
-    GITHUB_REPO = st.secrets['GITHUB_REPO']  # In the format 'username/repo_name'
+    GITHUB_TOKEN = st.secrets["github_token"]
+    GITHUB_REPO = st.secrets["github_repo"]  # In the format 'username/repo_name'
     # GITHUB_USERNAME = st.secrets['GITHUB_USERNAME']
     
     content = json.dumps(user_details, indent=4)
