@@ -509,15 +509,15 @@ if prompt := st.chat_input('Your message here...'):
         st.write("Please review your details below. You can make changes if necessary before submitting.")
 
         # Create a form for editing the details
-    with st.form(key='details_form'):
-        updated_details = {}
-        for field_name, field_value in st.session_state.user_details.dict().items():
-            input_label = field_name.replace('_',' ').title()
-            updated_value = st.text_input(input_label, value=field_value)
-            updated_details[field_name] = updated_value
-        
-        # Submit button
-        submitted = st.form_submit_button("Submit")
+        with st.form(key='details_form'):
+            updated_details = {}
+            for field_name, field_value in st.session_state.user_details.dict().items():
+                input_label = field_name.replace('_',' ').title()
+                updated_value = st.text_input(input_label, value=field_value)
+                updated_details[field_name] = updated_value
+            
+            # Submit button
+            submitted = st.form_submit_button("Submit")
     
     if submitted:
         for field_name, updated_value in updated_details.items():
