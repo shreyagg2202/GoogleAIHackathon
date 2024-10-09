@@ -506,41 +506,39 @@ if prompt := st.chat_input('Your message here...'):
             # Optionally, clear the conversation history
         messages = []
 
-    elif st.session_state.conversation_phase == 'finished' and st.session_state.clicked == False:
+    elif st.session_state.conversation_phase == 'finished':
         # Conversation is finished, you can reset or handle further interactions
         st.write("Please review your details below. You can make changes if necessary before submitting.")
         st.write(st.session_state.clicked)
 
         # Create a form for editing the details
         with st.form(key='details_form'):
-            
             for field_name, field_value in st.session_state.user_details.dict().items():
                 input_label = field_name.replace('_',' ').title()
                 updated_value = st.text_input(input_label, value=field_value)
                 updated_details[field_name] = updated_value
-            
-            def update_session_with_submitted():
-                st.session_state.clicked = True
 
             # Submit button
-            st.form_submit_button("Submit", on_click=update_session_with_submitted)
-    
-    elif st.session_state.clicked == True:
-        for field_name, updated_value in updated_details.items():
-            setattr(st.session_state.user_details, field_name, updated_value)
+            submit_button = st.form_submit_button("Submit")
+            
+        if submit_button:
+            for field_name, updated_value in updated_details.items():
+                setattr(st.session_state.user_details, field_name, updated_value)
 
-        # Save details to GitHub
-        save_details_to_github(st.session_state.user_details)
+            # Save details to GitHub
+            save_details_to_github(st.session_state.user_details)
+            
+            # Thank the user
+            st.success("Thank you! Your details have been submitted.")
+            # Reset the conversation
+            st.session_state.conversation_phase = 'policy_selection'
+            st.session_state.policy_selected = False
+            st.session_state.submitted = False
+            st.session_state.user_details = None
+            st.session_state.ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address']
+            st.session_state.messages = []
+            
+            # Refresh the app completely
+            st.experimental_rerun()
+                
         
-        # Thank the user
-        st.success("Thank you! Your details have been submitted.")
-        # Reset the conversation
-        st.session_state.conversation_phase = 'policy_selection'
-        st.session_state.policy_selected = False
-        st.session_state.submitted = False
-        st.session_state.user_details = None
-        st.session_state.ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address']
-        st.session_state.messages = []
-        
-        # Refresh the app completely
-        st.experimental_rerun()
