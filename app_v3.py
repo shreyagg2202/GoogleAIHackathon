@@ -25,13 +25,15 @@ import base64
 
 #initialization
 API_KEY = "AIzaSyD69RPGzZPIDHTRzIWQH887huukyD5cHHc"
-
+updated_details = {}
 
 # Initialize session state variables if not already set
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 if 'gemini_history' not in st.session_state:
     st.session_state.gemini_history = []
+if 'submitted' not in st.session_state:
+    st.session_state.submitted = False
 if 'conversation_phase' not in st.session_state:
     st.session_state.conversation_phase = 'policy_selection'  # Initial phase
 if 'policy_selected' not in st.session_state:
@@ -510,16 +512,20 @@ if prompt := st.chat_input('Your message here...'):
 
         # Create a form for editing the details
         with st.form(key='details_form'):
-            updated_details = {}
+            
             for field_name, field_value in st.session_state.user_details.dict().items():
                 input_label = field_name.replace('_',' ').title()
                 updated_value = st.text_input(input_label, value=field_value)
                 updated_details[field_name] = updated_value
             
+            def update_session_with_submitted():
+                 st.session_state.submitted = True
+
             # Submit button
-            submitted = st.form_submit_button("Submit")
+            if st.form_submit_button("Submit", on_click=update_session_with_submitted):
+                st.session_state.submitted = True
     
-    if submitted:
+    elif st.session_state.submitted == True:
         for field_name, updated_value in updated_details.items():
             setattr(st.session_state.user_details, field_name, updated_value)
 
@@ -531,6 +537,7 @@ if prompt := st.chat_input('Your message here...'):
         # Reset the conversation
         st.session_state.conversation_phase = 'policy_selection'
         st.session_state.policy_selected = False
+        st.session_state.submitted = False
         st.session_state.user_details = None
         st.session_state.ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address']
         st.session_state.messages = []
