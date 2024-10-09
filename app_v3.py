@@ -209,7 +209,7 @@ def save_details_to_github(user_details):
     filename = f"user_details_{timestamp}.json"
     
     # Prepare the API request
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filename}"
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/user_data/{filename}"
     headers = {
         'Authorization': f'token {GITHUB_TOKEN}',
         'Accept': 'application/vnd.github.v3+json'
