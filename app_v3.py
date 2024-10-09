@@ -26,6 +26,7 @@ import base64
 #initialization
 API_KEY = "AIzaSyD69RPGzZPIDHTRzIWQH887huukyD5cHHc"
 updated_details = {}
+submitted=False
 
 # Initialize session state variables if not already set
 if 'messages' not in st.session_state:
@@ -505,23 +506,26 @@ if prompt := st.chat_input('Your message here...'):
         messages = []
 
     elif st.session_state.conversation_phase == 'finished':
-        # Conversation is finished, you can reset or handle further interactions
-        st.write("Please review your details below. You can make changes if necessary before submitting.")
+        if submitted:
+            st.session_state.conversation_phase = "submitted"
+            st.experimental_rerun()
+        
+        else:
+            # Conversation is finished, you can reset or handle further interactions
+            st.write("Please review your details below. You can make changes if necessary before submitting.")
 
-        # Create a form for editing the details
-        with st.form(key='details_form'):
-            
-            for field_name, field_value in st.session_state.user_details.dict().items():
-                input_label = field_name.replace('_',' ').title()
-                updated_value = st.text_input(input_label, value=field_value)
-                updated_details[field_name] = updated_value
-            
-            def update_session_with_submitted():
-                st.session_state.conversation_phase = "submitted"
+            # Create a form for editing the details
+            with st.form(key='details_form'):
+                
+                for field_name, field_value in st.session_state.user_details.dict().items():
+                    input_label = field_name.replace('_',' ').title()
+                    updated_value = st.text_input(input_label, value=field_value)
+                    updated_details[field_name] = updated_value
+                
+                    st.session_state.conversation_phase = "submitted"
 
-            # Submit button
-            if st.form_submit_button("Submit", on_click=update_session_with_submitted):
-                st.session_state.conversation_phase = "submitted"
+                # Submit button
+                submitted = st.form_submit_button("Submit")
     
     elif st.session_state.conversation_phase == "submitted":
         for field_name, updated_value in updated_details.items():
