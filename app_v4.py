@@ -15,6 +15,7 @@ from langchain.prompts.chat import (
 )
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+
 # Import modules
 from personal_details import (
     BasePersonalDetails,
