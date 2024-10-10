@@ -11,12 +11,22 @@ class GeminiEmbeddingFunction(EmbeddingFunction):
         return genai.embed_content(model=model, content=input, task_type="question_answering")["embedding"]
 
 def get_relevant_passage(query_embedding, db):
-    passage = db.query(query_embeddings=[query_embedding], n_results=3)['documents'][0]
-    return passage
+    results = db.query(query_embeddings=[query_embedding], n_results=3)
+    documents = results['documents'][0]
+    metadatas = results['metadatas'][0]
+    return documents, metadatas
 
 def make_prompt(query, db, embedding_function):
     query_embeddings = embedding_function(query)
-    relevant_passage = get_relevant_passage(query_embeddings[0], db)
+    documents, metadatas = get_relevant_passage(query_embeddings[0], db)
+    relevant_passage = []
+
+    # Combine metadata with document content
+    for doc, meta in zip(documents, metadatas):
+        policy_name = meta.get('policy_name', 'Unknown Policy')
+        combined = f"Policy Name: {policy_name}\n{doc}"
+        relevant_passage.append(combined)
+    
     relevant_passage = "\n\n---\n\n".join(relevant_passage)
     prompt = f"""
     INSTRUCTIONS:

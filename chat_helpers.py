@@ -3,6 +3,7 @@
 import streamlit as st
 
 def assistant_response_format(content, MODEL_ROLE='ai', AI_AVATAR_ICON='✨'):
+    
     with st.chat_message(name=MODEL_ROLE, avatar=AI_AVATAR_ICON):
         st.markdown(content)
     st.session_state.messages.append({
