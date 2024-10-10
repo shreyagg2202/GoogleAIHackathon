@@ -81,8 +81,8 @@ def detect_policy_type(conversation):
     selected_policy = model.generate_content(conversation_text)
     # Parse the LLM's response to extract policy name and type
     try:
-        policy_name = selected_policy.split('Policy Name = ')[1].split('"')[1]
-        policy_type = selected_policy.split('Policy Type = ')[1].split('"')[1]
+        policy_name = selected_policy.text.split('Policy Name = ')[1].split('"')[1]
+        policy_type = selected_policy.text.split('Policy Type = ')[1].split('"')[1]
     except IndexError:
         policy_name = "None"
         policy_type = "None"
