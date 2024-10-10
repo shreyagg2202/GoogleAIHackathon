@@ -73,7 +73,7 @@ except AttributeError as e:
 
 embedding_function = GeminiEmbeddingFunction()
 chroma_client = chromadb.PersistentClient(path="Chroma_DB/")
-db = chroma_client.get_collection(name="Test3", embedding_function=embedding_function)
+db = chroma_client.get_collection(name="Policy_Bazaar", embedding_function=embedding_function)
 
 st.title("PolicyPal")
 st.caption("A policy advisor powered by Google Gemini")
