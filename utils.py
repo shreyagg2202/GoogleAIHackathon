@@ -44,7 +44,18 @@ def make_prompt(query, db, embedding_function):
     """
     return prompt
 
-def detect_policy_type(prompt):
+def detect_policy_type(conversation):
+
+    # Convert the conversation (list of messages) into a single string
+    conversation_text = ""
+    for message in conversation:
+        role = message['role']
+        content = message['content']
+        if role == 'user':
+            conversation_text += f"User: {content}\n"
+        elif role == 'ai':
+            conversation_text += f"Assistant: {content}\n"
+
 
     generation_config = {
     "temperature": 1,
@@ -67,9 +78,15 @@ def detect_policy_type(prompt):
     generation_config=generation_config,
     )
 
-    selected_policy = model.generate_content(prompt)
-    policy_name = selected_policy.split('Policy Name = ')[1].split('"')[1]
-    policy_type = selected_policy.split('Policy Type = ')[1].split('"')[1]
+    selected_policy = model.generate_content(conversation_text)
+    # Parse the LLM's response to extract policy name and type
+    try:
+        policy_name = selected_policy.split('Policy Name = ')[1].split('"')[1]
+        policy_type = selected_policy.split('Policy Type = ')[1].split('"')[1]
+    except IndexError:
+        policy_name = "None"
+        policy_type = "None"
+        
     return policy_name, policy_type
 
 # Function to save details to GitHub

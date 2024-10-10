@@ -4,8 +4,6 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 # Define PersonalDetails classes
-
-
 # Base class for common personal details
 class BasePersonalDetails(BaseModel):
     name: Optional[str] = Field(default="", description="This is the name of the user.")
