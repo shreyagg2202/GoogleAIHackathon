@@ -1,11 +1,10 @@
 # personal_details.py
 
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Field
+from typing import List, Optional
 
 # Define PersonalDetails classes
-from pydantic import BaseModel, Field
-from typing import Optional
+
 
 # Base class for common personal details
 class BasePersonalDetails(BaseModel):

@@ -13,7 +13,7 @@ from langchain.prompts.chat import (
     ChatPromptTemplate,
     MessagesPlaceholder,
 )
-from langchain.chat_models import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Import modules
 from personal_details import (
