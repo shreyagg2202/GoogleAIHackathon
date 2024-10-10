@@ -98,9 +98,8 @@ import streamlit as st
 
 def save_details_to_github(user_details):
     # Get GitHub credentials from st.secrets
-    GITHUB_TOKEN = st.secrets['GITHUB_TOKEN']
-    GITHUB_REPO = st.secrets['GITHUB_REPO']  # In the format 'username/repo_name'
-    GITHUB_USERNAME = st.secrets['GITHUB_USERNAME']
+    GITHUB_TOKEN = st.secrets['github_token']
+    GITHUB_REPO = st.secrets['github_repo']  # In the format 'username/repo_name'
 
     content = json.dumps(user_details.dict(), indent=4)
     # Create a unique filename using timestamp
@@ -108,7 +107,7 @@ def save_details_to_github(user_details):
     filename = f"user_details_{timestamp}.json"
 
     # Prepare the API request
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{filename}"
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/user_data/{filename}"
     headers = {
         'Authorization': f'token {GITHUB_TOKEN}',
         'Accept': 'application/vnd.github.v3+json'
@@ -121,9 +120,3 @@ def save_details_to_github(user_details):
     }
 
     response = requests.put(url, headers=headers, data=json.dumps(payload))
-
-    if response.status_code == 201:
-        st.success("Details saved to GitHub successfully.")
-    else:
-        st.error(f"Failed to save details to GitHub. Status code: {response.status_code}")
-        st.error(response.json())

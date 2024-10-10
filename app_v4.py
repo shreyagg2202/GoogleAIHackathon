@@ -46,7 +46,7 @@ if 'policy_selected' not in st.session_state:
 if 'user_details' not in st.session_state:
     st.session_state.user_details = None
 if 'ask_for' not in st.session_state:
-    st.session_state.ask_for = ['name', 'date_of_birth', 'address', 'phone_number', 'email_address']
+    st.session_state.ask_for = []
 if 'PersonalDetails' not in st.session_state:
     st.session_state.PersonalDetails = BasePersonalDetails
 if 'selected_policy_name' not in st.session_state:
@@ -331,6 +331,9 @@ if st.session_state.conversation_phase == 'finished':
         st.session_state.user_details = None
         st.session_state.ask_for = []
         st.session_state.messages = []
+        st.session_state.gemini_history = []
+        st.session_state.selected_policy_name = None
+        st.session_state.selected_policy_type = None
 
         # Stop the app
         st.stop()
