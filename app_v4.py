@@ -150,7 +150,7 @@ if prompt := st.chat_input('Your message here...'):
             assistant_response_format(confirmation_message)
         else:
             # Continue policy selection conversation with the LLM
-            user_prompt = make_prompt(prompt)
+            user_prompt = make_prompt(prompt, db, embedding_function)
             response = st.session_state.chat.send_message(
                 user_prompt,
                 stream=True,
