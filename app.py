@@ -58,6 +58,7 @@ db = chroma_client.get_collection(name="Test3", embedding_function=embedding_fun
 
 def get_relevant_passage(query_embedding, db):
 #   st.write("db:" ,db.get())
+  
   passage = db.query(query_embeddings=[query_embedding], n_results=3)['documents'][0]
   return passage
 
