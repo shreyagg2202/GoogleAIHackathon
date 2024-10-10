@@ -119,7 +119,7 @@ def make_prompt(query):
     query_embeddings = embedding_function(query)
     # st.write("query_embeddings:" ,query_embeddings)
     relevant_passage = get_relevant_passage(query_embeddings[0], db)
-    st.write("relevant_passage:" ,relevant_passage)
+    # st.write("relevant_passage:" ,relevant_passage)
     relevant_passage = "\n\n---\n\n".join(relevant_passage)
     #   escaped = relevant_passage.replace("'", "").replace('"', "").replace("\n", " ")
     prompt = (f"""
