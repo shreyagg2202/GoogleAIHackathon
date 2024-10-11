@@ -75,12 +75,12 @@ embedding_function = GeminiEmbeddingFunction()
 chroma_client = chromadb.PersistentClient(path="Chroma_DB/")
 db = chroma_client.get_collection(name="Policy_Bazaar", embedding_function=embedding_function)
 
-st.title("PolicyPal")
-st.caption("A policy advisor powered by Google Gemini")
+st.title("Policy Bazaar")
+st.caption("Navigating You to the Right Policy")
 
 # Instructions for the user
 st.markdown("""
-### Welcome to Policy Bazaar!
+### Welcome to PolicyPal!
 
 This assistant is here to help you understand and select the best insurance policy for your needs. You can ask any questions about insurance policies, and the assistant will provide you with expert advice.
 
